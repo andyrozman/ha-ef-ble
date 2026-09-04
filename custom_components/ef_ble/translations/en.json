@@ -1111,7 +1111,7 @@
       },
       "phase_active_pwr": {
         "name": "{name} Active Power"
-      },
+      }
     },
     "select": {
       "led_mode": {
