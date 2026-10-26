@@ -16,7 +16,7 @@ if TYPE_CHECKING:
     from .props import ProtobufProps, RawDataProps
 
 
-def sn_from_advertisement(adv_data: AdvertisementData):
+def sn_from_advertisement(adv_data: AdvertisementData) -> bytes | None:
     if not (
         hasattr(adv_data, "manufacturer_data")
         and DeviceBase.MANUFACTURER_KEY in adv_data.manufacturer_data
@@ -24,7 +24,12 @@ def sn_from_advertisement(adv_data: AdvertisementData):
         return None
 
     man_data = adv_data.manufacturer_data[DeviceBase.MANUFACTURER_KEY]
-    return man_data[1:17].strip(b"\x00")
+    sn = man_data[1:17].strip(b"\x00")
+
+    if not sn or all(c == ord("0") for c in sn):
+        return None
+
+    return sn
 
 
 def is_unsupported(

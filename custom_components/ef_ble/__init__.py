@@ -109,7 +109,28 @@ async def async_setup_entry(hass: HomeAssistant, entry: DeviceConfigEntry) -> bo
     discovery_info = bluetooth.async_last_service_info(hass, address, connectable=True)
 
     if device is None:
+        _LOGGER.warning(
+            "EF BLE DISCOVERY: configured_address=%s, "
+            "discovered_address=%s, "
+            "advertised_name=%s, "
+            "manufacturer_data=%s, "
+            "extracted_serial=%s",
+            address,
+            discovery_info.device.address,
+            discovery_info.device.name,
+            discovery_info.advertisement.manufacturer_data,
+            eflib.sn_from_advertisement(discovery_info.advertisement),
+        )
+
         device = eflib.NewDevice(discovery_info.device, discovery_info.advertisement)
+
+        _LOGGER.warning(
+            "EF BLE DEVICE SELECTED: class=%s, name=%s, serial=%s",
+            type(device).__name__ if device else None,
+            device.name if device else None,
+            device.serial_number if device else None,
+        )
+
         if device is None:
             raise ConfigEntryNotReady(translation_key="unable_to_create_device")
 
